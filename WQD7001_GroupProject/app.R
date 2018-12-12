@@ -11,6 +11,9 @@ library(shiny)
 library(leaflet)
 library(dplyr)
 library(xlsx)
+library(ggplot2)
+library(waffle)
+library(RColorBrewer)
 
 # To read all the data
 co2waste <- read.xlsx("GHG_Emissions_by_Sector.xlsx","GHG2015_cleaned",startRow = 2,endRow = 179,colIndex = c(2,4,9,10,11,12,14),header = T)
@@ -68,8 +71,8 @@ ui <- fluidPage(
     )
   ),
   
-  tags$div(img(src='global-environmental-law-and-governance-1600x600.jpg',height="300px",width="100%"),
-           tags$div(h1(class="centered","How Malaysia is doing in municipal waste management? A global comparison.")),
+  tags$div(img(src='header11.jpg',height="300px",width="100%"),
+           
   
   tags$div(
   
@@ -85,12 +88,12 @@ ui <- fluidPage(
                        column(6,dataTableOutput("MSWrank"))
                        ),
               tabPanel("% of Municipal waste Recycled",
-                       column(6,plotOutput("Recycle")),
+                       column(6,plotOutput("Recycle"), style="overflow-y: scroll;overflow-x: scroll;"),
                        column(6,dataTableOutput("Recyclerank"))
                        ),
               tabPanel("Malaysia Waste Composition",
-                       column(6,plotOutput("Composition")),
-                       column(6,dataTableOutput("Compositionrank"))
+                       column(8,plotOutput("Composition")),
+                       column(4,dataTableOutput("Compositionrank"))
                        ),
               tabPanel("What can we do as a solution?",
                        column(6,h3("1. First of all, do not waste food!"),
@@ -114,7 +117,8 @@ ui <- fluidPage(
                               img(src="fromgarbagetogarden.jpg",width="70%")
                        )
               ),
-              tabPanel("Video",tags$video(id="video", type = "video/mp4",src = "awareness.mp4", controls = "controls"),height=500)
+              tabPanel("Video",tags$video(id="video", type = "video/mp4",src = "awareness.mp4", controls = "controls"),height=500),
+              tabPanel("Documentation") #Jiunn Jye to add code inside the tabPanel bracket
               
           )
   )
@@ -143,7 +147,7 @@ server <- function(input, output) {
                        radius = (co2waste$Total.GHG.Emissions.in.MMTCDE)/50, 
                        popup = co2waste$Label,
                        color = pal(co2waste$range),
-                       group = "co2 emission"
+                       group = "CO2 emission"
                        ) %>%
       
       addCircleMarkers(lng = co2waste$Long, 
@@ -151,25 +155,25 @@ server <- function(input, output) {
                        radius = (co2waste$percentageWaste), 
                        popup = co2waste$Label,
                        color = pal2(co2waste$percentagerange),
-                       group = "co2 percentage by waste"
+                       group = "CO2 percentage by waste"
       ) %>%
       
       addLegend("bottomleft", pal = pal, values = co2waste$range,
                 title = "million metric tonnes of carbon dioxide equivalents",
                 labFormat = labelFormat(suffix  = " mmtcde"),
                 opacity = 0.5,
-                group = "co2 emission"
+                group = "CO2 emission"
                 ) %>%
     
       addLegend("bottomleft", pal = pal2, values = co2waste$percentagerange,
               title = "percentage of CO2 emission by waste",
               labFormat = labelFormat(suffix  = "%"),
-              group = "co2 percentage by waste",
+              group = "CO2 percentage by waste",
               opacity = 0.5
       ) %>%
       
       addLayersControl(
-        overlayGroups = c("co2 emission", "co2 percentage by waste"),
+        overlayGroups = c("CO2 emission", "CO2 percentage by waste"),
         options = layersControlOptions(collapsed = FALSE)
       )
     
@@ -188,12 +192,7 @@ server <- function(input, output) {
   
   #output bar chart    
   output$CO2waste <- renderPlot({
-    par(mar=c(10, 4.1, 4.1, 2.1))
-    barplot(top20CO2waste$percentageWaste, 
-            main="Top 20 CO2 emission by waste",
-            ylab="Percentage",
-            names.arg = top20CO2waste$Country,
-            las=2)
+    ggplot(top20CO2waste[1:20,], aes(x=reorder(Country, -percentageWaste),y=percentageWaste)) + geom_text (label= round(top20CO2waste$percentageWaste,1),position=position_dodge(width=0.9), vjust=-0.25) +geom_bar(stat="identity") + theme(axis.text.x = element_text(angle = 90, hjust = 1),plot.title = element_text(hjust = 0.5, size=22),axis.text=element_text(size=12))+labs(title="Top 20 Country (Percentage of CO2 Emission by Waste",x = "Top 20 Country", y="Percentage of CO2 Emission by Waste")
     
   }
     
@@ -217,14 +216,13 @@ server <- function(input, output) {
   #output bar chart  
   output$Recycle <- renderPlot({
     
-    barplot(recyclePercentage$Percentage.Recycled.in.2015, 
-            main="Percentage of Municipal Waste Recycled in 2015",
-            ylab="percentage",
-            names.arg = recyclePercentage$Country,
-            las =2)
+    ggplot(recyclePercentage, aes(x=reorder(Country, -Percentage.Recycled.in.2015),y=Percentage.Recycled.in.2015)) + geom_text (label= recyclePercentage$Rank,position=position_dodge(width=0.9), vjust=-0.25) +geom_bar(stat="identity") + theme(axis.text.x = element_text(angle = 90, hjust = 1,vjust=0.5),plot.title = element_text(hjust = 0.5, size=22),axis.text=element_text(size=12))+labs(title="Percentage or Waste Recycled in 2015",x = "Country", y="Percentage of Waste Recycled")
     
-  }
-  
+    
+    
+  },
+  height=500,
+  width=1000
   )
   
   #output data table
@@ -232,21 +230,15 @@ server <- function(input, output) {
   
   #output bar chart
   output$Composition <- renderPlot({
-    par(mar=c(14, 4.1, 4.1, 2.1))
-    barplot(wasteComposition$Percentage, 
-            main="Malaysia Municipal Waste Composition",
-            ylim=c(0,50),
-            names.arg = wasteComposition$Waste.Components,
-            las =2
-            )
-            
-    
+    qual_col_pals = brewer.pal.info[brewer.pal.info$category == 'qual',]
+    col_vector = unlist(mapply(brewer.pal, qual_col_pals$maxcolors, rownames(qual_col_pals)))
+    waffle(component,colors = sample(col_vector,length(component)),xlab = "Types of Waste", title = "Malaysia Municipal Solid Waste Composition") + theme(plot.title = element_text(hjust = 0.5,size = 27, face = "bold", colour = "darkred"), legend.text = element_text(size = 15),axis.title.x = element_text(size=18))
   }
   
   )
   
   #output data table
-  output$Compositionrank <- renderDataTable(wasteComposition %>% select(Type,Waste.Components,Percentage),options = list(lengthMenu = c(5,10), pageLength = 10))
+  output$Compositionrank <- renderDataTable(wasteComposition %>% select(Type,Waste.Components,Percentage),options = list(lengthMenu = c(5,10), pageLength = 10)) 
   
   
 }
