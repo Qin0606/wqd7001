@@ -65,33 +65,22 @@ countries <- recyclePercentage %>% distinct(Country) %>% arrange(Country)
 # Define User Interface for the application
 ui <- fluidPage(
   
-  title = "How Malaysia is doing in municipal waste management? A global comparison.",              
+  title = "Turning Garbage Into Cabbage?",              
   tags$head(
     
     tags$style(  #css
       "
       h1 {
-      text-align:center;
+        text-align:center;
       }
-      .centered {
-      position: absolute;;
-      top: 10%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      text-shadow:
-      -1px -1px 0 #000,
-      1px -1px 0 #000,
-      -1px 1px 0 #000,
-      1px 1px 0 #000;
-      color: white;
-      } 
-     "
+      "
     )
   ),
   
-  tags$div(img(src='header11.jpg',height="300px",width="100%"),
+  tags$div(img(src='mainpagebg___.jpg',width="100%"),
+      
            
-  
+           
   tags$div(
   
            tabsetPanel(
