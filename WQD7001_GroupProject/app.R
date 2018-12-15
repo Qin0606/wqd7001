@@ -228,6 +228,8 @@ server <- function(input, output) {
   
   #output bar chart
   output$Composition <- renderPlot({
+    component <- wasteComposition$Percentage
+    names(component) <- wasteComposition$Waste.Components
     qual_col_pals = brewer.pal.info[brewer.pal.info$category == 'qual',]
     col_vector = unlist(mapply(brewer.pal, qual_col_pals$maxcolors, rownames(qual_col_pals)))
     waffle(component,colors = sample(col_vector,length(component)),xlab = "Types of Waste", title = "Malaysia Municipal Solid Waste Composition") + theme(plot.title = element_text(hjust = 0.5,size = 27, face = "bold", colour = "darkred"), legend.text = element_text(size = 15),axis.title.x = element_text(size=18))
