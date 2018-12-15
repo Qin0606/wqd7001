@@ -1,0 +1,85 @@
+---
+title: "What **MORE** can we do to reduce Greenhouse Gas Emission ?"
+author: "Greenolution"
+date: "December 15, 2018"
+output: html_document
+---
+
+# What **MORE** can we do to reduce Greenhouse Gas Emission ?
+
+## Prelude
+
+> **Global Warming is real !**
+
+And Greenhouse Gas (GHG) Emission is the main contributor to global warming.
+
+We have been educated to reduce our energy usage, to use reduce Greenhouse Gas emission by using more efficient vehicle or to use public transport. Most of us have been playing our civil part to the best we can but that is far from enough. 
+
+This is our journey to find out what more we can do to curb this global phenomenon. Through this app, we like to share what we had learnt in this journey. Hoping to share our knowledge to the mass, and make some impact to this world that we love.
+
+
+
+## [Where does the Greenhouse Gas came from ?](https://greenolution.shinyapps.io/WQD7001_GroupProject/_w_f44aceb9/#tab-9773-1) 
+
+We started by exploring exploring the breakdown of Greenhouse Gas emission globally. Truly, ask and we shall get, we managed to find interesting data in UNSD (United Nation Statistic Division), breaking down the GHG emission by country and sectors.
+[UNSD GHG Emissions By Sector](https://unstats.un.org/unsd/environment/excel_file_tables/2013/GHG_Emissions_by_Sector.xlsx)
+
+The data are grouped into Energy, Transport, Industrial Processes, Agriculture, Waste. This data is in the unit of [**MMTCDE**](https://ec.europa.eu/eurostat/statistics-explained/index.php/Glossary:Carbon_dioxide_equivalent); which means “million metric tonnes of carbon dioxide equivalents“. 
+
+MMTCDE is a metric measure used to compare the emissions from various greenhouse gases on the basis of their global-warming potential (GWP) by converting them into CO2 equivalent scale. 
+
+Exploring the data from the global reading, the waste is the smallest contributor at 4%. When we zoom into Malaysia, the percentage of GHG Emission contributed from Waste is recorded at 13.6%. More than 3X of global average ! 
+
+> Malaysia produce 3X more Greenhouse Gas from waste than global average
+ 
+Comparing to the largest GHG contributor country, China’s waste contribution to GHG is at 1.4% and US’s waste contribution to GHG is at 1.9%. Our neighbor Thailand has waste contribution at 3.9% while, Indonesia has waste contribution at 28.3%. Ranking up the data, Malaysia is at ranked top 20 in Percentage of GHG emission by waste.
+
+
+
+## [Why such a drastic difference in Malaysia?](https://greenolution.shinyapps.io/WQD7001_GroupProject/_w_f44aceb9/#tab-9773-2)
+With that question, we embark to discover more about waste management; especially in Malaysia.
+
+>Do Malaysian producing more waste ?
+
+Based on [World Bank Data](http://siteresources.worldbank.org/INTURBANDEVELOPMENT/Resources/336387-1334852610766/AnnexJ.pdf), the richer the country, the higher amount of waste generated.
+
+**Surprise !** Maybe not. 
+
+By comparing the data, Malaysia is rank at 54 in waste generation, with each of us producing at **1.52 kg/day**. That is around the average value for Upper Middle Income at 1.5 kg/capita/day.
+
+> You and I produce 1.52 kg of waste each day
+
+That still does not explain the drastic emission of GHG by waste for Malaysia.
+
+
+
+## [What happened to our waste ?](https://greenolution.shinyapps.io/WQD7001_GroupProject/_w_f44aceb9/#tab-9773-3)
+
+We have been singing recycling songs since 1980s and have we been recycling? We search into the breakdown of how much of the waste are being recycled and got this data from [United Nations Statistics Division Percentage Municipal Solid Waste Recycled](https://unstats.un.org/unsd/environment/Questionnaires/website%20tables%20and%20selected%20time%20series/2016/PercentageMunicipalWaste_recycled.xlsx).
+
+Based on this, Malaysia are ranked at 28. And to our credit there has been drastic improvement in this number if we look at the trend. 
+
+> Malaysia is on uptrend in Solid Waste Recycle :) 
+
+So we have been recycling just like what other countries do, but why is our GHG emission from waste still far above average ?
+
+
+
+## [What’s in our waste ?](https://greenolution.shinyapps.io/WQD7001_GroupProject/#tab-9773-4)
+
+With that question, we search further for the answer and manage to find the composition of our waste from 
+[Kementerian Kesejahteraan Bandar, Perumahan dan Kerajaan Tempatan - Survey on Solid Waste Composition, Characteristic & Existing Practice of Solid Waste Recycling in Malaysia](http://jpspn.kpkt.gov.my/resources/index/user_1/Sumber_Rujukan/kajian/Final_Report_REVz.pdf)
+
+To our surprise, **FOOD WASTE** stands out above all the rest at almost **45%** ! 
+
+> 45% of our waste are FOOD WASTE 
+
+And it make total sense to non rocket scientist like us. Food Waste, thrown into dump site or landfill will get decomposed. And that produces greenhouse gases. Beside that, the Food Waste also further pollute the waste with smells and germs making our waste recycling less viable.
+
+## [How do we address this !](https://greenolution.shinyapps.io/WQD7001_GroupProject/#tab-5883-5)
+Reduce, reuse, recycle. That is the mantra. 
+More practical actionable in [What can we do as a solution](https://greenolution.shinyapps.io/WQD7001_GroupProject/#tab-5883-5)
+
+> DO YOU KNOW , if global food waste is a country, it is the 3rd largest Greenhouse Gas emitter in the world 
+
+
