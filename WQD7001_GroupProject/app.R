@@ -53,7 +53,6 @@ ui <- fluidPage(
       h1 {
       text-align:center;
       }
-
       .centered {
       position: absolute;;
       top: 10%;
@@ -83,7 +82,7 @@ ui <- fluidPage(
                        ),
               tabPanel("Economy vs Amount of Municipal Waste Generation",
                        h2("Based on data from World Bank, the richer the country, the higher the amount of waste generated."),
-                       column(6,plotOutput("MSW")),
+                       column(6,img(src='Average_MSW.png',width="100%")),
                        column(6,dataTableOutput("MSWrank"))
                        ),
               tabPanel("% of Municipal waste Recycled",
@@ -117,8 +116,7 @@ ui <- fluidPage(
                        )
               ),
               tabPanel("Video",tags$video(id="video", type = "video/mp4",src = "awareness.mp4", controls = "controls"),height=500),
-              tabPanel("Documentation",includeHTML("description.html"))
-              #tabPanel("Documentation",includeMarkdown("description.md"))
+              tabPanel("Documentation",includeMarkdown("description.Rmd"))
               
           )
   )
@@ -230,6 +228,8 @@ server <- function(input, output) {
   
   #output bar chart
   output$Composition <- renderPlot({
+    component <- wasteComposition$Percentage
+    names(component) <- wasteComposition$Waste.Components
     qual_col_pals = brewer.pal.info[brewer.pal.info$category == 'qual',]
     col_vector = unlist(mapply(brewer.pal, qual_col_pals$maxcolors, rownames(qual_col_pals)))
     waffle(component,colors = sample(col_vector,length(component)),xlab = "Types of Waste", title = "Malaysia Municipal Solid Waste Composition") + theme(plot.title = element_text(hjust = 0.5,size = 27, face = "bold", colour = "darkred"), legend.text = element_text(size = 15),axis.title.x = element_text(size=18))
@@ -245,4 +245,3 @@ server <- function(input, output) {
 
 # Run the application 
 shinyApp(ui = ui, server = server)
-
