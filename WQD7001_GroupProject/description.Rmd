@@ -1,11 +1,11 @@
 ---
-title: "What **MORE** can we do to reduce Greenhouse Gas Emission ?"
+title: "What **MORE** can we do to combat Global Warming ?"
 author: "Greenolution"
 date: "December 15, 2018"
 output: html_document
 ---
 
-# What **MORE** can we do to reduce Greenhouse Gas Emission ?
+# What **MORE** can we do to combat Global Warming ?
 
 ## Prelude
 
