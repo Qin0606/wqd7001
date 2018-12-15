@@ -14,6 +14,7 @@ library(xlsx)
 library(ggplot2)
 library(waffle)
 library(RColorBrewer)
+library(markdown)
 
 # To read all the data
 ghgEmission <- read.xlsx("GHG_Emissions_by_Sector.xlsx","GHG2015_cleaned",startRow = 2,endRow = 179,colIndex = c(2,4,9,10,11,12,14),header = T)
@@ -116,7 +117,8 @@ ui <- fluidPage(
                        )
               ),
               tabPanel("Video",tags$video(id="video", type = "video/mp4",src = "awareness.mp4", controls = "controls"),height=500),
-              tabPanel("Documentation") #Jiunn Jye to add code inside the tabPanel bracket
+              #tabPanel("Documentation",includeHTML("description.html"))
+              tabPanel("Documentation",includeMarkdown("description.md"))
               
           )
   )
