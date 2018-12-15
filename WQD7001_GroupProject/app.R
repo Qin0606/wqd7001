@@ -117,8 +117,8 @@ ui <- fluidPage(
                        )
               ),
               tabPanel("Video",tags$video(id="video", type = "video/mp4",src = "awareness.mp4", controls = "controls"),height=500),
-              #tabPanel("Documentation",includeHTML("description.html"))
-              tabPanel("Documentation",includeMarkdown("description.md"))
+              tabPanel("Documentation",includeHTML("description.html"))
+              #tabPanel("Documentation",includeMarkdown("description.md"))
               
           )
   )
