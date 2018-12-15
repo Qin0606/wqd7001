@@ -84,7 +84,7 @@ ui <- fluidPage(
                        ),
               tabPanel("Economy vs Amount of Municipal Waste Generation",
                        h2("Based on data from World Bank, the richer the country, the higher the amount of waste generated."),
-                       column(6,plotOutput("MSW")),
+                       column(6,(img(src='Average_MSW.png',width="100%"))),
                        column(6,dataTableOutput("MSWrank"))
                        ),
               tabPanel("% of Municipal waste Recycled",
