@@ -16,26 +16,26 @@ library(waffle)
 library(RColorBrewer)
 
 # To read all the data
-co2waste <- read.xlsx("GHG_Emissions_by_Sector.xlsx","GHG2015_cleaned",startRow = 2,endRow = 179,colIndex = c(2,4,9,10,11,12,14),header = T)
+ghgEmission <- read.xlsx("GHG_Emissions_by_Sector.xlsx","GHG2015_cleaned",startRow = 2,endRow = 179,colIndex = c(2,4,9,10,11,12,14),header = T)
 mswGeneration <- read.xlsx("World bank income and msw per capita.xlsx","Sheet1",startRow = 2,endRow = 163,colIndex = c(1:7),header = T)
 recyclePercentage <- read.xlsx("PercentageMunicipalWaste_recycled.xlsx","Cleaned",startRow = 1, endRow = 58, colIndex = c(2,24,25),header = T)
 wasteComposition <- read.xlsx("Waste Composition.xlsx","Sheet1",startRow = 1,endRow = 32,colIndex = c(1:6),header = T)
 
-co2waste$range  <- cut(co2waste$Total.GHG.Emissions.in.MMTCDE,  #categorised the emission values
+ghgEmission$range  <- cut(ghgEmission$Total.GHG.Emissions.in.MMTCDE,  #categorised the emission values
                        breaks = c(0,5,25,100,500,7500),right = FALSE, 
                        labels = c("0-5","5-25","25-100","100-500","500-7500"))
 
-pal <- colorFactor(c("blue","green","yellow","orange","red"),co2waste$range) #create a color pallette for the category created 
+pal <- colorFactor(c("blue","green","yellow","orange","red"),ghgEmission$range) #create a color pallette for the category created 
 
-co2waste$percentageWaste  <- co2waste$GHGfromWaste / co2waste$Total.GHG.Emissions.in.MMTCDE * 100 #calculate the percentage of CO2 emission by waste
+ghgEmission$percentageWaste  <- ghgEmission$GHGfromWaste / ghgEmission$Total.GHG.Emissions.in.MMTCDE * 100 #calculate the percentage of GHG emission by waste
 
-top20CO2waste <- co2waste %>% select(Country,percentageWaste) %>%  arrange(desc(percentageWaste)) %>% top_n(20,percentageWaste)
+top20GHGwaste <- ghgEmission %>% select(Country,percentageWaste) %>%  arrange(desc(percentageWaste)) %>% top_n(20,percentageWaste)
 
-co2waste$percentagerange  <- cut(co2waste$percentageWaste,  #categorised the percentage values and create a color pallete
+ghgEmission$percentagerange  <- cut(ghgEmission$percentageWaste,  #categorised the percentage values and create a color pallete
                        breaks = c(0,5,10,20,30,100),right = FALSE, 
                        labels = c("[0-5)","[5-10)","[10-20)","[20-30)","[30-100)"))
 
-pal2 <- colorFactor(c("blue","green","yellow","orange","red"),co2waste$percentagerange)
+pal2 <- colorFactor(c("blue","green","yellow","orange","red"),ghgEmission$percentagerange)
 
 #calculate the average waste generation based on income level
 mswEconomy <- mswGeneration %>% group_by(Income.Level) %>% summarise(Average.MSW.Generation.Per.Capita.kg.day = mean(MSW.Generation.Per.Capita..kg.capita.day.)) %>% arrange(desc(Average.MSW.Generation.Per.Capita.kg.day))
@@ -65,8 +65,6 @@ ui <- fluidPage(
       1px 1px 0 #000;
       color: white;
       } 
-      
-     
      "
     )
   ),
@@ -77,10 +75,10 @@ ui <- fluidPage(
   tags$div(
   
            tabsetPanel(
-              tabPanel("CO2 generation from waste",column(8,leafletOutput("mymapCO2",height = 500),fluidRow(verbatimTextOutput("map_marker_click"))),
-                       column(4,dataTableOutput("CO2emission")),
-                       column(8,plotOutput("CO2waste")),
-                       column(4,h3("Malaysia is among the top 20 countries in CO2 emission by waste!"))
+              tabPanel("Greenhouse Gas generation from waste",column(8,leafletOutput("mymapGHG",height = 500),fluidRow(verbatimTextOutput("map_marker_click"))),
+                       column(4,dataTableOutput("GHGemission")),
+                       column(8,plotOutput("GHGByWastePercentage")),
+                       column(4,h3("Malaysia is among the top 20 countries in GHG emission by percentage of waste over total emission !!!"))
                        ),
               tabPanel("Economy vs Amount of Municipal Waste Generation",
                        h2("Based on data from World Bank, the richer the country, the higher the amount of waste generated."),
@@ -132,7 +130,7 @@ ui <- fluidPage(
 server <- function(input, output) {
   
   #plot the map
-  output$mymapCO2 <- renderLeaflet({
+  output$mymapGHG <- renderLeaflet({
     m <- leaflet() %>%
       addTiles(group = "OSM",
                options = providerTileOptions(minZoom = 2, maxZoom = 10)) %>% 
@@ -142,38 +140,38 @@ server <- function(input, output) {
                     , lng2 = 180
                     , lat2 = 90 ) %>%
       
-      addCircleMarkers(lng = co2waste$Long, 
-                       lat = co2waste$Lat, weight = 3, 
-                       radius = (co2waste$Total.GHG.Emissions.in.MMTCDE)/50, 
-                       popup = co2waste$Label,
-                       color = pal(co2waste$range),
-                       group = "CO2 emission"
+      addCircleMarkers(lng = ghgEmission$Long, 
+                       lat = ghgEmission$Lat, weight = 3, 
+                       radius = (ghgEmission$Total.GHG.Emissions.in.MMTCDE)/50, 
+                       popup = ghgEmission$Label,
+                       color = pal(ghgEmission$range),
+                       group = "GHG emission"
                        ) %>%
       
-      addCircleMarkers(lng = co2waste$Long, 
-                       lat = co2waste$Lat, weight = 3, 
-                       radius = (co2waste$percentageWaste), 
-                       popup = co2waste$Label,
-                       color = pal2(co2waste$percentagerange),
-                       group = "CO2 percentage by waste"
+      addCircleMarkers(lng = ghgEmission$Long, 
+                       lat = ghgEmission$Lat, weight = 3, 
+                       radius = (ghgEmission$percentageWaste), 
+                       popup = ghgEmission$Label,
+                       color = pal2(ghgEmission$percentagerange),
+                       group = "GHG percentage by waste"
       ) %>%
       
-      addLegend("bottomleft", pal = pal, values = co2waste$range,
+      addLegend("bottomleft", pal = pal, values = ghgEmission$range,
                 title = "million metric tonnes of carbon dioxide equivalents",
                 labFormat = labelFormat(suffix  = " mmtcde"),
                 opacity = 0.5,
-                group = "CO2 emission"
+                group = "GHG emission"
                 ) %>%
     
-      addLegend("bottomleft", pal = pal2, values = co2waste$percentagerange,
-              title = "percentage of CO2 emission by waste",
+      addLegend("bottomleft", pal = pal2, values = ghgEmission$percentagerange,
+              title = "percentage of GHG emission by waste",
               labFormat = labelFormat(suffix  = "%"),
-              group = "CO2 percentage by waste",
+              group = "GHG percentage by waste",
               opacity = 0.5
       ) %>%
       
       addLayersControl(
-        overlayGroups = c("CO2 emission", "CO2 percentage by waste"),
+        overlayGroups = c("GHG emission", "GHG percentage by waste"),
         options = layersControlOptions(collapsed = FALSE)
       )
     
@@ -188,11 +186,11 @@ server <- function(input, output) {
   })
   
   #output table
-  output$CO2emission <- renderDataTable(co2waste %>% select(Country,Total.GHG.Emissions.in.MMTCDE,Rank) %>%  arrange(desc(Total.GHG.Emissions.in.MMTCDE)),options = list(lengthMenu = c(5,10), pageLength = 10))
+  output$GHGemission <- renderDataTable(ghgEmission %>% select(Country,Total.GHG.Emissions.in.MMTCDE,Rank) %>%  arrange(desc(Total.GHG.Emissions.in.MMTCDE)),options = list(lengthMenu = c(5,10), pageLength = 10))
   
   #output bar chart    
-  output$CO2waste <- renderPlot({
-    ggplot(top20CO2waste[1:20,], aes(x=reorder(Country, -percentageWaste),y=percentageWaste)) + geom_text (label= round(top20CO2waste$percentageWaste,1),position=position_dodge(width=0.9), vjust=-0.25) +geom_bar(stat="identity") + theme(axis.text.x = element_text(angle = 90, hjust = 1),plot.title = element_text(hjust = 0.5, size=22),axis.text=element_text(size=12))+labs(title="Top 20 Country (Percentage of CO2 Emission by Waste",x = "Top 20 Country", y="Percentage of CO2 Emission by Waste")
+  output$GHGwaste <- renderPlot({
+    ggplot(top20GHGwaste[1:20,], aes(x=reorder(Country, -percentageWaste),y=percentageWaste)) + geom_text (label= round(top20GHGwaste$percentageWaste,1),position=position_dodge(width=0.9), vjust=-0.25) +geom_bar(stat="identity") + theme(axis.text.x = element_text(angle = 90, hjust = 1),plot.title = element_text(hjust = 0.5, size=22),axis.text=element_text(size=12))+labs(title="Top 20 Country (Percentage of GHG Emission by Waste",x = "Top 20 Country", y="Percentage of GHG Emission by Waste")
     
   }
     
