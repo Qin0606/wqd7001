@@ -19,7 +19,8 @@ library(markdown)
 # To read all the data
 ghgEmission <- read.xlsx("GHG_Emissions_by_Sector.xlsx","GHG2015_cleaned",startRow = 2,endRow = 179,colIndex = c(2,4,9,10,11,12,14),header = T)
 mswGeneration <- read.xlsx("World bank income and msw per capita.xlsx","Sheet1",startRow = 2,endRow = 163,colIndex = c(1:7),header = T)
-recyclePercentage <- read.xlsx("PercentageMunicipalWaste_recycled.xlsx","Cleaned",startRow = 1, endRow = 58, colIndex = c(2,24,25),header = T)
+recyclePercentage2015 <- read.xlsx("PercentageMunicipalWaste_recycled.xlsx","Cleaned",startRow = 1, endRow = 58, colIndex = c(2,24,25),header = T)
+recyclePercentage <- read.xlsx("PercentageMunicipalWaste_recycled.xlsx","Cleaned",startRow = 1, endRow = 88, colIndex = c(2:26),header = T)
 wasteComposition <- read.xlsx("Waste Composition.xlsx","Sheet1",startRow = 1,endRow = 32,colIndex = c(1:6),header = T)
 
 ghgEmission$range  <- cut(ghgEmission$Total.GHG.Emissions.in.MMTCDE,  #categorised the emission values
@@ -40,6 +41,25 @@ pal2 <- colorFactor(c("blue","green","yellow","orange","red"),ghgEmission$percen
 
 #calculate the average waste generation based on income level
 mswEconomy <- mswGeneration %>% group_by(Income.Level) %>% summarise(Average.MSW.Generation.Per.Capita.kg.day = mean(MSW.Generation.Per.Capita..kg.capita.day.)) %>% arrange(desc(Average.MSW.Generation.Per.Capita.kg.day))
+
+# Clean data for Recycle Percentage Comparison
+# Clean up columnNames
+colnames(recyclePercentage) <- str_replace(colnames(recyclePercentage), 'X','') 
+colnames(recyclePercentage) <- str_replace(colnames(recyclePercentage), 'Percentage.Recycled.in.','') 
+
+# Gather By Year
+recyclePercentageByYear <- gather(recyclePercentage, Year, RecyclePercent, c(2:23,25))
+
+# convert Year and RecyclePercent to numberic
+recyclePercentageByYear <- recyclePercentageByYear %>% mutate(Year = as.numeric(Year), RecyclePercent = as.numeric(RecyclePercent))
+
+# Compute Global Average reading by Year
+recyclePercentageByYear <- rbind (recyclePercentageByYear, 
+                                  recyclePercentageByYear %>% group_by(Year) %>% 
+                                    summarise(RecyclePercent = mean(RecyclePercent, na.rm = T)) %>% 
+                                    mutate (Country='Global', Rank = 0) %>% select (Country, Rank, Year, RecyclePercent))
+
+countries <- recyclePercentage %>% distinct(Country) %>% arrange(Country)
 
 
 # Define User Interface for the application
@@ -87,7 +107,21 @@ ui <- fluidPage(
                        ),
               tabPanel("% of Municipal waste Recycled",
                        column(6,plotOutput("Recycle"), style="overflow-y: scroll;overflow-x: scroll;"),
-                       column(6,dataTableOutput("Recyclerank"))
+                       column(6,
+                              fluidRow (
+                                column(8,
+                                       selectInput("var", 
+                                                   label = "Select country to compare",
+                                                   choices = countries,
+                                                   selected = "Malaysia")
+                                )
+                              ),
+                              fluidRow (
+                                column(8,
+                                       plotOutput("recycleTrend")
+                                )
+                              )
+                              )
                        ),
               tabPanel("Malaysia Waste Composition",
                        column(8,plotOutput("Composition")),
@@ -213,10 +247,7 @@ server <- function(input, output) {
   
   #output bar chart  
   output$Recycle <- renderPlot({
-    
-    ggplot(recyclePercentage, aes(x=reorder(Country, -Percentage.Recycled.in.2015),y=Percentage.Recycled.in.2015)) + geom_text (label= recyclePercentage$Rank,position=position_dodge(width=0.9), vjust=-0.25) +geom_bar(stat="identity") + theme(axis.text.x = element_text(angle = 90, hjust = 1,vjust=0.5),plot.title = element_text(hjust = 0.5, size=22),axis.text=element_text(size=12))+labs(title="Percentage or Waste Recycled in 2015",x = "Country", y="Percentage of Waste Recycled")
-    
-    
+    ggplot(recyclePercentage2015, aes(x=reorder(Country, -Percentage.Recycled.in.2015),y=Percentage.Recycled.in.2015)) + geom_text (label= recyclePercentage2015$Rank,position=position_dodge(width=0.9), vjust=-0.25) +geom_bar(stat="identity") + theme(axis.text.x = element_text(angle = 90, hjust = 1,vjust=0.5),plot.title = element_text(hjust = 0.5, size=22),axis.text=element_text(size=12))+labs(title="Percentage or Waste Recycled in 2015",x = "Country", y="Percentage of Waste Recycled")
     
   },
   height=500,
@@ -224,7 +255,23 @@ server <- function(input, output) {
   )
   
   #output data table
-  output$Recyclerank <- renderDataTable(recyclePercentage %>% select(Country,Percentage.Recycled.in.2015,Rank),options = list(lengthMenu = c(5,10), pageLength = 10))
+  #output$Recyclerank <- renderDataTable(recyclePercentage %>% select(Country,Percentage.Recycled.in.2015,Rank),options = list(lengthMenu = c(5,10), pageLength = 10))
+  output$recycleTrend <- renderPlot({
+    
+    countryToPlot = c('Global', input$var)
+    
+    recyclePercentageByYear %>% 
+      filter(Country %in% countryToPlot) %>%
+      ggplot(aes(x=Year, y= RecyclePercent , color=Country)) + 
+      geom_line() + scale_x_continuous(breaks = recyclePercentageByYear$Year) + 
+      theme(axis.text.x = element_text(angle = 90), axis.text=element_text(size=12)) +
+      scale_y_continuous(breaks = seq(0,50, by=2), limits=c(0, 40)) +
+      xlab("Year") + 
+      ylab("Percentage of Solid Waste Recycled")
+    
+  },
+  height=400,
+  width=600)
   
   #output bar chart
   output$Composition <- renderPlot({
