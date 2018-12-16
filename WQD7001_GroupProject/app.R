@@ -17,6 +17,8 @@ library(RColorBrewer)
 library(markdown)
 library(stringr)
 library(tidyr)
+library(knitr)
+library(rmarkdown)
 
 # To read all the data
 ghgEmission <- read.xlsx("GHG_Emissions_by_Sector.xlsx","GHG2015_cleaned",startRow = 2,endRow = 179,colIndex = c(2,4,9,10,11,12,14),header = T)
