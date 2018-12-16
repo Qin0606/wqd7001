@@ -15,6 +15,10 @@ library(ggplot2)
 library(waffle)
 library(RColorBrewer)
 library(markdown)
+library(stringr)
+library(tidyr)
+library(knitr)
+library(rmarkdown)
 
 # To read all the data
 ghgEmission <- read.xlsx("GHG_Emissions_by_Sector.xlsx","GHG2015_cleaned",startRow = 2,endRow = 179,colIndex = c(2,4,9,10,11,12,14),header = T)
@@ -117,26 +121,33 @@ ui <- fluidPage(
                        column(4,dataTableOutput("Compositionrank"))
                        ),
               tabPanel("What can we do as a solution?",
-                       column(6,h3("1. First of all, do not waste food!"),
-                       tags$ul(tags$li("When we waste food, remember that we contribute to global warming!"),
-                               tags$li("We are also wasting all the energy and water it takes to grow, harvest, transport, and package it.")),
-                       img(src="foodwastegraph.JPG"),
-                       h3("2. Plan ahead and buy only what you need."),
-                       tags$ul(tags$li("Going to the store without a plan or on an empty stomach can lead to buying more than we need."),
-                               tags$li("Avoid unnecessary purchases by planning your grocery list ahead of time.")),
-                       h3("3. Be creative with left over"),
-                       tags$ul(tags$li("Before you shop, use food you already have."),
-                               tags$li("Websites like Big Oven, Supercook, and MyFridgeFood allow you to search for recipes based on ingredients already in your kitchen.")),
-                       h3("4. Make DIY Compost!"),
-                       tags$ul(tags$li("Home composting is a process that uses natural decomposition to transform landscape and kitchen waste into a rich soil amendment that does wonders for a garden."),
-                               tags$li("Turning garbage into green cabbage!"),
-                               tags$li(tags$a(href="https://www.diynetwork.com/how-to/outdoors/gardening/how-to-make-compost", "A simple guide to DIY compost!")))),
-                       column(4,offset = 2,img(src="antifoodwaste2.jpg", height = "50%" ,width="70%"),
-                                img(src="antifoodwaste.jpg"),
-                              tags$br(),
-                              tags$br(),
+                       column(4, h2(style="text-align:center; border: 1px solid rgb(211,211,211)","Reduce"),
+                              h3("1. First of all, do not waste food!"),
+                              tags$ul(tags$li("When we waste food, remember that we contribute to global warming!"),
+                              tags$li("We are also wasting all the energy and water it takes to grow, harvest, transport, and package it.")),
+                              img(src="foodwastegraph.JPG",width="100%"),
+                              h3("2. Plan ahead and buy only what you need."),
+                              tags$ul(tags$li("Going to the store without a plan or on an empty stomach can lead to buying more than we need."),
+                              tags$li("Avoid unnecessary purchases by planning your grocery list ahead of time.")),
+                              img(src="antifoodwaste.jpg")
+                              ),
+                       column(4,style = "border-left: 1px solid rgb(211,211,211); border-right: 1px solid rgb(211,211,211)", h2(style="text-align:center; border: 1px solid rgb(211,211,211)", "Reuse"),
+                              h3("1. Take away if you can't finish your food"),
+                              tags$ul(tags$li("Finish it when you are once again hungry!")),
+                              h3("2. Sharing is caring!"),
+                              tags$ul(tags$li("Share your portion if you can't finish it")),        
+                              h3("3. Be creative with leftovers ingredient!"),        
+                              tags$ul(tags$li("Websites like Big Oven, Supercook, and MyFridgeFood allow you to search for recipes based on ingredients already in your kitchen.")),
+                              img(src="antifoodwaste2.jpg", width="100%")
+                              ),
+                       column(4,h2(style="text-align:center; border: 1px solid rgb(211,211,211)","Recycle"),
+                              h3("1. Make DIY Compost!"),
+                              tags$ul(tags$li("Home composting is a process that uses natural decomposition to transform landscape and kitchen waste into a rich soil amendment that does wonders for a garden."),
+                              tags$li("Turning garbage into green cabbage!"),
+                              tags$li(tags$a(href="https://www.diynetwork.com/how-to/outdoors/gardening/how-to-make-compost", "A simple guide to DIY compost!"))),
                               img(src="fromgarbagetogarden.jpg",width="70%")
                        )
+                       
               ),
               tabPanel("Video",tags$video(id="video", type = "video/mp4",src = "awareness.mp4", controls = "controls"),height=500),
               tabPanel("Documentation",includeMarkdown("description.Rmd"))
