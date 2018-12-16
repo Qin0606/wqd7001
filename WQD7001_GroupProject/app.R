@@ -95,7 +95,7 @@ ui <- fluidPage(
                        ),
               tabPanel("Economy vs Amount of Municipal Waste Generation",
                        h2("Based on data from World Bank, the richer the country, the higher the amount of waste generated."),
-                       column(6,img(src='Average_MSW.png',width="100%")),
+                       column(6,img(src='Average_MSW.jpg',width="100%")),
                        column(6,dataTableOutput("MSWrank"))
                        ),
               tabPanel("% of Municipal waste Recycled",
@@ -223,7 +223,7 @@ server <- function(input, output) {
   output$GHGemission <- renderDataTable(ghgEmission %>% select(Country,Total.GHG.Emissions.in.MMTCDE,Rank) %>%  arrange(desc(Total.GHG.Emissions.in.MMTCDE)),options = list(lengthMenu = c(5,10), pageLength = 10))
   
   #output bar chart    
-  output$GHGwaste <- renderPlot({
+  output$GHGByWastePercentage <- renderPlot({
     ggplot(top20GHGwaste[1:20,], aes(x=reorder(Country, -percentageWaste),y=percentageWaste)) + geom_text (label= round(top20GHGwaste$percentageWaste,1),position=position_dodge(width=0.9), vjust=-0.25) +geom_bar(stat="identity") + theme(axis.text.x = element_text(angle = 90, hjust = 1),plot.title = element_text(hjust = 0.5, size=22),axis.text=element_text(size=12))+labs(title="Top 20 Country (Percentage of GHG Emission by Waste",x = "Top 20 Country", y="Percentage of GHG Emission by Waste")
     
   }
