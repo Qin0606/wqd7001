@@ -93,7 +93,7 @@ ui <- fluidPage(
                        column(8,plotOutput("GHGByWastePercentage")),
                        column(4,h3("Malaysia is among the top 20 countries in GHG emission by percentage of waste over total emission !!!"))
                        ),
-              tabPanel("Economy vs Amount of Municipal Waste Generation",
+              tabPanel("Income Level vs Amount of Municipal Waste Generation",
                        h2("Based on data from World Bank, the richer the country, the higher the amount of waste generated."),
                        column(6,img(src='Average_MSW.jpg',width="100%")),
                        column(6,dataTableOutput("MSWrank"))
@@ -247,7 +247,7 @@ server <- function(input, output) {
   
   #output bar chart  
   output$Recycle <- renderPlot({
-    ggplot(recyclePercentage2015, aes(x=reorder(Country, -Percentage.Recycled.in.2015),y=Percentage.Recycled.in.2015)) + geom_text (label= recyclePercentage2015$Rank,position=position_dodge(width=0.9), vjust=-0.25) +geom_bar(stat="identity") + theme(axis.text.x = element_text(angle = 90, hjust = 1,vjust=0.5),plot.title = element_text(hjust = 0.5, size=22),axis.text=element_text(size=12))+labs(title="Percentage or Waste Recycled in 2015",x = "Country", y="Percentage of Waste Recycled")
+    ggplot(recyclePercentage2015, aes(x=reorder(Country, -Percentage.Recycled.in.2015),y=Percentage.Recycled.in.2015)) + geom_text (label= recyclePercentage2015$Rank,position=position_dodge(width=0.9), vjust=-0.25) +geom_bar(stat="identity") + theme(axis.text.x = element_text(angle = 90, hjust = 1,vjust=0.5),plot.title = element_text(hjust = 0.5, size=22),axis.text=element_text(size=12))+labs(title="Percentage of Waste Recycled in 2015",x = "Country", y="Percentage of Waste Recycled")
     
   },
   height=500,
